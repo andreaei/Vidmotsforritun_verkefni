@@ -1,0 +1,25 @@
+
+#fxBord {
+    -fx-grid-lines-visible: true;
+}
+
+
+.cell {
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-border-style: solid;
+    -fx-alignment: center;
+    -fx-background-color: lightgray;
+}
+
+#fxTeningurButton {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 200px;
+}
+
+#fxSkilabod1, #fxSkilabod2 {
+    -fx-padding: 20px 200px 20px 200px;
+    -fx-min-width: 500px;
+    -fx-alignment: center-left;
+    -fx-wrap-text: true;
+}
