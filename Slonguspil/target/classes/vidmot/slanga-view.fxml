@@ -2,17 +2,16 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.Pane?>
-<BorderPane fx:controller="vidmot.SlangaController" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="vidmot.SlangaController">
     <center>
         <StackPane fx:id="fxGameStack" BorderPane.alignment="CENTER">
             <children>
@@ -43,15 +42,22 @@
                <children>
                   <Label fx:id="fxSkilabod1" text="Label" />
                   <Label fx:id="fxSkilabod2" text="Label" />
-                  <TextField fx:id="fxInput"/>
                </children>
             </VBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="fxPlayButton" mnemonicParsing="false" onAction="#nyrLeikurHandler" text="Button" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" />
+                  <Button fx:id="fxPlayButton" mnemonicParsing="false" onAction="#nyrLeikurHandler" text="Spila Aftur" />
                   <Button fx:id="fxTeningurButton" mnemonicParsing="false" onAction="#teningurHandler" text="Button" />
                </children>
             </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label fx:id="fxPlayer1WinCountLabel" text="Label" />
+                  <Label fx:id="fxPlayer2WinCountLabel" text="Label" />
+               </children>
+            </VBox>
+            <Button fx:id="fxNyrLeikurButton" mnemonicParsing="false" text="Nýr Leikur" />
          </children>
       </HBox>
    </bottom>

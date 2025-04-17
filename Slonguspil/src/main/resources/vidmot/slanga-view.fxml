@@ -46,10 +46,18 @@
             </VBox>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Button fx:id="fxPlayButton" mnemonicParsing="false" onAction="#nyrLeikurHandler" text="Button" />
+                  <VBox prefHeight="200.0" prefWidth="100.0" />
+                  <Button fx:id="fxPlayButton" mnemonicParsing="false" onAction="#nyrLeikurHandler" text="Spila Aftur" />
                   <Button fx:id="fxTeningurButton" mnemonicParsing="false" onAction="#teningurHandler" text="Button" />
                </children>
             </HBox>
+            <VBox prefHeight="200.0" prefWidth="100.0">
+               <children>
+                  <Label fx:id="fxPlayer1WinCountLabel" text="Label" />
+                  <Label fx:id="fxPlayer2WinCountLabel" text="Label" />
+               </children>
+            </VBox>
+            <Button fx:id="fxNyrLeikurButton" mnemonicParsing="false" text="Nýr Leikur" />
          </children>
       </HBox>
    </bottom>

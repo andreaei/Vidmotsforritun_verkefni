@@ -11,7 +11,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -33,13 +32,19 @@ public class SlangaController {
     private Button fxPlayButton;
 
     @FXML
+    private  Button fxNyrLeikurButton;
+
+    @FXML
     private Label fxSkilabod1;
 
     @FXML
     private Label fxSkilabod2;
 
     @FXML
-    private TextField fxInput;
+    private Label fxPlayer1WinCountLabel;
+
+    @FXML
+    private Label fxPlayer2WinCountLabel;
 
     @FXML
     private GridPane fxBord;
@@ -63,6 +68,9 @@ public class SlangaController {
 
         reitir.clear();
         fxBord.getChildren().clear();
+
+        System.out.println("Texti á fxPlayButton er: " + fxPlayButton.getText());
+
 
         //Opna Dialog í byrjun leiks. setja inn nöfn playera
         PlayerSetupDialog dialog = new PlayerSetupDialog();
@@ -141,6 +149,22 @@ public class SlangaController {
                 Bindings.when(leikur.LeikLokidProperty())
                         .then(leikur.sigurvegariProperty())
                         .otherwise(leikur.hverALeikProperty()));
+
+        fxPlayer1WinCountLabel.textProperty().bind(
+                Bindings.createStringBinding(
+                        () -> leikur.getLeikmadur1().getNafn() + " sigrar: " + leikur.getLeikmadur1().getSigrar(),
+                        leikur.getLeikmadur1().nafnProperty(),
+                        leikur.getLeikmadur1().sigrarProperty()
+                )
+        );
+
+        fxPlayer2WinCountLabel.textProperty().bind(
+                Bindings.createStringBinding(
+                        () -> leikur.getLeikmadur2().getNafn() + " sigrar: " + leikur.getLeikmadur2().getSigrar(),
+                        leikur.getLeikmadur2().nafnProperty(),
+                        leikur.getLeikmadur2().sigrarProperty()
+                )
+        );
 
 
 

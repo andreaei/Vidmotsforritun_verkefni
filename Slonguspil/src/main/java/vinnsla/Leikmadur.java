@@ -6,18 +6,16 @@ import javafx.beans.property.SimpleStringProperty;
 public class Leikmadur {
     private final SimpleStringProperty nafn;
     private final SimpleIntegerProperty reitur;
+    private final SimpleIntegerProperty sigrar;
 
     public Leikmadur(String nafn) {
         this.nafn = new SimpleStringProperty(nafn);
         this.reitur = new SimpleIntegerProperty(0); // Byrjar á reit 0
+        this.sigrar = new SimpleIntegerProperty(0);
     }
 
     public String getNafn() {
         return nafn.get();
-    }
-
-    public void setNafn(String nafn) {
-        this.nafn.set(nafn);
     }
 
     public SimpleStringProperty nafnProperty() {
@@ -30,6 +28,18 @@ public class Leikmadur {
 
     public void setReitur(int reitur) {
         this.reitur.set(reitur);
+    }
+
+    public void sigur(){
+        this.sigrar.set(getSigrar()+1);
+    }
+
+    public int getSigrar(){
+        return sigrar.get();
+    }
+
+    public SimpleIntegerProperty sigrarProperty() {
+        return sigrar;
     }
 
     public SimpleIntegerProperty reiturProperty() {

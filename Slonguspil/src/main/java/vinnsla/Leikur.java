@@ -65,6 +65,9 @@ public class Leikur {
         if(leikmadurCurrent.getReitur() == 24){
             Sigurvegari.set(getHverALeik());
             System.out.println("Win");
+            leikmadurCurrent.sigur();
+            System.out.println(leikmadur1.getSigrar());
+            System.out.println(leikmadur2.getSigrar());
             LeikLokid.set(true);
             return true;
         }
