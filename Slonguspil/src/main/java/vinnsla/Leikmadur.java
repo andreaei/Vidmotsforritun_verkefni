@@ -5,13 +5,17 @@ import javafx.beans.property.SimpleStringProperty;
 
 public class Leikmadur {
     private final SimpleStringProperty nafn;
-    private final SimpleIntegerProperty reitur;
+    private final SimpleIntegerProperty oldReitur;
+    private final SimpleIntegerProperty nyrReitur;
+    private final SimpleIntegerProperty lendingSlangaStigi;
     private final SimpleIntegerProperty sigrar;
 
     public Leikmadur(String nafn) {
         this.nafn = new SimpleStringProperty(nafn);
-        this.reitur = new SimpleIntegerProperty(0); // Byrjar á reit 0
+        this.oldReitur = new SimpleIntegerProperty(1);
+        this.nyrReitur = new SimpleIntegerProperty(1); // Byrjar á reit 1
         this.sigrar = new SimpleIntegerProperty(0);
+        this.lendingSlangaStigi = new SimpleIntegerProperty();
     }
 
     public String getNafn() {
@@ -22,12 +26,20 @@ public class Leikmadur {
         return nafn;
     }
 
-    public int getReitur() {
-        return reitur.get();
+    public int getOldReitur() {
+        return oldReitur.get();
     }
 
-    public void setReitur(int reitur) {
-        this.reitur.set(reitur);
+    public void setOldReitur(int reitur) {
+        this.oldReitur.set(reitur);
+    }
+
+    public int getNyrReitur() {
+        return nyrReitur.get();
+    }
+
+    public void setNyrReitur(int reitur) {
+        this.nyrReitur.set(reitur);
     }
 
     public void sigur(){
@@ -38,13 +50,27 @@ public class Leikmadur {
         return sigrar.get();
     }
 
+    public int getLendingSlonguStiga(){
+        return lendingSlangaStigi.get();
+    }
+
+    public void setLendingSlonguStiga(int lending){
+        this.lendingSlangaStigi.set(lending);
+    }
+
     public SimpleIntegerProperty sigrarProperty() {
         return sigrar;
     }
 
-    public SimpleIntegerProperty reiturProperty() {
-        return reitur;
+    public SimpleIntegerProperty oldReiturProperty() {
+        return oldReitur;
     }
+
+    public SimpleIntegerProperty nyrReiturProperty() {
+        return nyrReitur;
+    }
+
+
 
     /**
      * Færir leikmann á reit reitur en markið er í reit max
@@ -53,10 +79,12 @@ public class Leikmadur {
      */
     public void faera (int reitur, int max) {
         if(reitur >= max){
-            setReitur(max);
+            setOldReitur(getNyrReitur());
+            setNyrReitur(max);
         }
         else {
-            setReitur(reitur);
+            setOldReitur(getNyrReitur());
+            setNyrReitur(reitur);
         }
 
     }

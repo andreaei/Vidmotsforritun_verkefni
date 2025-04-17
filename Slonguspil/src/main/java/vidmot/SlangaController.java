@@ -117,8 +117,8 @@ public class SlangaController {
         playerPane.getChildren().add(leikmadur2Icon);
 
         Platform.runLater(()-> {
-            movePlayerSmoothly(leikmadur1Icon, 1);
-            movePlayerSmoothly(leikmadur2Icon, 1);
+            setPlayerPosition(leikmadur1Icon, 1);
+            setPlayerPosition(leikmadur2Icon, 1);
         });
 
 
@@ -220,8 +220,13 @@ public class SlangaController {
             teningurImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(realImagePath))));
 
             // Hreyfa leikmenn
-            movePlayerSmoothly(leikmadur1Icon, leikur.getLeikmadur1().getReitur());
-            movePlayerSmoothly(leikmadur2Icon, leikur.getLeikmadur2().getReitur());
+            if(leikur.getLeikmadurCurrent().equals(leikur.getLeikmadur1())){
+                movePlayer(leikmadur1Icon, leikur.getLeikmadur1().getOldReitur(), leikur.getLeikmadur1().getNyrReitur());
+            }
+
+            else{
+                movePlayer(leikmadur2Icon, leikur.getLeikmadur2().getOldReitur(), leikur.getLeikmadur2().getNyrReitur());
+            }
 
             // Ef leik lokið
             if (gameOver) {
@@ -239,11 +244,9 @@ public class SlangaController {
 
     public void playAgainHandler(ActionEvent actionEvent){
         leikur.nyrLeikur();
-        fxBord.getChildren().remove(leikmadur1Icon);
-        fxBord.getChildren().remove(leikmadur2Icon);
 
-        movePlayerSmoothly(leikmadur1Icon, 1);
-        movePlayerSmoothly(leikmadur2Icon, 1);
+        setPlayerPosition(leikmadur1Icon, 1);
+        setPlayerPosition(leikmadur2Icon, 1);
 
         fxTeningurButton.setDisable(false);
 
@@ -259,8 +262,8 @@ public class SlangaController {
         playerHandler(dialog.getPlayer1Name(), dialog.getPlayer2Name());
         leikur.nyrLeikur();
 
-        movePlayerSmoothly(leikmadur1Icon, 1);
-        movePlayerSmoothly(leikmadur2Icon, 1);
+        setPlayerPosition(leikmadur1Icon, 1);
+        setPlayerPosition(leikmadur2Icon, 1);
 
         fxTeningurButton.setDisable(false);
 
@@ -307,26 +310,74 @@ public class SlangaController {
         }
     }
 
-    private void movePlayerSmoothly(ImageView playerIcon, int reitur) {
+    private void movePlayer(ImageView playerIcon, int fromTile, int toTile) {
+        List<Integer> path = new ArrayList<>();
+        for (int i = fromTile + 1; i <= toTile; i++) {
+            path.add(i);
+        }
+
+        moveStepByStep(playerIcon, path, 0);
+    }
+
+    private void moveStepByStep(ImageView playerIcon, List<Integer> path, int index) {
+        if (index >= path.size()) {
+            // Step movement finished, now check for snake/ladder
+            int finalTile = path.get(path.size() - 1);
+            int lendingSlonguStiga = leikur.getLeikmadurCurrent().getLendingSlonguStiga();
+            if (lendingSlonguStiga != finalTile) {
+                moveDirect(playerIcon, lendingSlonguStiga);
+            } else {
+                fxTeningurButton.setDisable(false); // Leyfa næsta kast ef engin slanga/stigi
+            }
+            return;
+        }
+
+        int reitur = path.get(index);
         for (Node node : reitir) {
             if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(reitur))) {
                 Bounds bounds = node.localToScene(node.getBoundsInLocal());
-
-                double newX = bounds.getMinX();
-                double newY = bounds.getMinY();
-
-                // Breyta í staðsetningu innan fxBord (Pane)
-                Point2D parentCoords = fxBord.sceneToLocal(newX, newY);
+                Point2D parentCoords = fxBord.sceneToLocal(bounds.getMinX(), bounds.getMinY());
 
                 TranslateTransition transition = new TranslateTransition(Duration.millis(200), playerIcon);
                 transition.setToX(parentCoords.getX());
                 transition.setToY(parentCoords.getY());
+                transition.setOnFinished(e -> moveStepByStep(playerIcon, path, index + 1));
                 transition.play();
-
-                return;
+                break;
             }
         }
     }
+
+    private void setPlayerPosition(ImageView playerIcon, int tile) {
+        for (Node node : reitir) {
+            if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(tile))) {
+                Bounds bounds = node.localToScene(node.getBoundsInLocal());
+                Point2D parentCoords = fxBord.sceneToLocal(bounds.getMinX(), bounds.getMinY());
+
+                playerIcon.setTranslateX(parentCoords.getX());
+                playerIcon.setTranslateY(parentCoords.getY());
+                break;
+            }
+        }
+    }
+
+    private void moveDirect(ImageView playerIcon, int reitur) {
+        for (Node node : reitir) {
+            if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(reitur))) {
+                Bounds bounds = node.localToScene(node.getBoundsInLocal());
+                Point2D parentCoords = fxBord.sceneToLocal(bounds.getMinX(), bounds.getMinY());
+
+                TranslateTransition transition = new TranslateTransition(Duration.millis(300), playerIcon);
+                transition.setToX(parentCoords.getX());
+                transition.setToY(parentCoords.getY());
+                transition.play();
+                leikur.getLeikmadurCurrent().faera(reitur,24);
+                break;
+            }
+        }
+    }
+
+
 
 
 }

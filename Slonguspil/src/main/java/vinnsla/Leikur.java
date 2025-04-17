@@ -15,6 +15,8 @@ public class Leikur {
     private final SimpleStringProperty Sigurvegari;
     private final SimpleStringProperty HverALeik;
 
+    Leikmadur leikmadurCurrent;
+    Leikmadur leikmadurNext;
 
 
 
@@ -43,8 +45,6 @@ public class Leikur {
      */
     public boolean leikaLeik(){
         teningur.kasta();
-        Leikmadur leikmadurCurrent;
-        Leikmadur leikmadurNext;
 
         //Hver á að gera
         if(getHverALeik().equals(leikmadur1.getNafn())){
@@ -57,12 +57,13 @@ public class Leikur {
         }
 
         //færa leikmanninn, athuga sigur og skipta í næsta leikmann
-        int currentReitur = leikmadurCurrent.getReitur();
+        int currentReitur = leikmadurCurrent.getNyrReitur();
         int nyrReitur = currentReitur+teningur.getTening();
 
-        nyrReitur = slongurStigar.LendingarReitur(nyrReitur, leikmadurCurrent.getNafn()); //breyta lendingareit ef stigi/slanga
+        leikmadurCurrent.setLendingSlonguStiga(slongurStigar.LendingarReitur(nyrReitur, leikmadurCurrent.getNafn()));
         leikmadurCurrent.faera(nyrReitur,fjoldiReita);
-        if(leikmadurCurrent.getReitur() == 24){
+        //Sigur
+        if(leikmadurCurrent.getNyrReitur() == 24){
             Sigurvegari.set(getHverALeik());
             System.out.println("Win");
             leikmadurCurrent.sigur();
@@ -72,9 +73,6 @@ public class Leikur {
             return true;
         }
         HverALeik.set(leikmadurNext.getNafn());
-
-        System.out.println(leikmadurCurrent.getNafn() + leikmadurCurrent.getReitur());
-        System.out.println(leikmadurNext.getNafn() + leikmadurNext.getReitur());
 
         return false;
     }
@@ -86,8 +84,10 @@ public class Leikur {
     public void nyrLeikur(){
         LeikLokid.set(false);
         Sigurvegari.set("");
-        leikmadur1.setReitur(1);
-        leikmadur2.setReitur(1);
+        leikmadur1.setNyrReitur(1);
+        leikmadur2.setNyrReitur(1);
+        leikmadur1.setOldReitur(1);
+        leikmadur2.setOldReitur(1);
         randomStart();
         slongurStigar.FaersluSkilabodProperty().set("");
     }
@@ -110,6 +110,10 @@ public class Leikur {
 
     public Leikmadur getLeikmadur2(){
         return leikmadur2;
+    }
+
+    public Leikmadur getLeikmadurCurrent(){
+        return  leikmadurCurrent;
     }
 
     public SimpleStringProperty hverALeikProperty(){
