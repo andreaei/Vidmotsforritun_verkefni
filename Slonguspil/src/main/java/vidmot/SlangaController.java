@@ -14,7 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.util.Duration;
@@ -52,8 +51,6 @@ public class SlangaController {
     private List<Node> reitir = new ArrayList<>();
 
     private Leikur leikur;
-    private String nafn1, nafn2;
-    private Boolean fyrstiLeikmadurInput = true;
     private ImageView leikmadur1Icon;
     private ImageView leikmadur2Icon;
     private ImageView slangaIcon;
@@ -62,11 +59,15 @@ public class SlangaController {
     public void initialize(){
 
         leikur = new Leikur();
-        fxInput.setPromptText("Leikmaður 1, sláðu inn nafn og ýttu á Enter:");
         leikur.LeikLokidProperty().set(true);
 
         reitir.clear();
         fxBord.getChildren().clear();
+
+        //Opna Dialog í byrjun leiks. setja inn nöfn playera
+        PlayerSetupDialog dialog = new PlayerSetupDialog();
+        dialog.showAndWait();
+        playerNameHandler(dialog.getPlayer1Name(),dialog.getPlayer2Name());
 
         int rows = 4;
         int cols = 6;
@@ -104,11 +105,7 @@ public class SlangaController {
         });
 
 
-        fxInput.setOnKeyPressed(event ->{
-            if(event.getCode() == KeyCode.ENTER){
-                playerNameHandler();
-            }
-        });
+
 
         slangaIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/vidmot/css/myndir/snake.png"))));
         stigiIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/vidmot/css/myndir/ladder.png"))));
@@ -160,28 +157,9 @@ public class SlangaController {
 
     }
 
-    public void playerNameHandler(){
-        String inputNafn = fxInput.getText().trim();
-        if(inputNafn.isEmpty()){
-            fxInput.setPromptText("Nafn má ekki vera tómt! Reyndu aftur:");
-            return;
-        }
-        if(fyrstiLeikmadurInput){
-            nafn1 = inputNafn;
-            fyrstiLeikmadurInput = false;
-            fxInput.clear();
-            fxInput.setPromptText("Leikmaður 2, sláðu inn nafn og ýttu á Enter:");
-        }
-        else {
-            nafn2 = inputNafn;
-            leikur.setLeikmenn(nafn1,nafn2);
-            fxInput.clear();
-            fxInput.setDisable(true);
-            leikur.nyrLeikur(); //byrjum leikinn
-            fxInput.setPromptText("...");
-
-        }
-
+    public void playerNameHandler(String nafn1,String nafn2){
+        leikur.setLeikmenn(nafn1,nafn2);
+        leikur.nyrLeikur(); //byrjum leikinn
     }
 
     public void teningurHandler(ActionEvent actionEvent){
