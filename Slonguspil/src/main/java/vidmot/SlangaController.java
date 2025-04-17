@@ -78,6 +78,9 @@ public class SlangaController {
         //Opna Dialog í byrjun leiks. setja inn nöfn playera
         PlayerSetupDialog dialog = new PlayerSetupDialog();
         dialog.showAndWait();
+        if (!dialog.isConfirmed()) {
+            System.exit(0);
+        }
         playerHandler(dialog.getPlayer1Name(),dialog.getPlayer2Name());
 
         int rows = 4;
@@ -219,6 +222,9 @@ public class SlangaController {
     public void nyrLeikurHandler(ActionEvent actionEvent){
         PlayerSetupDialog dialog = new PlayerSetupDialog();
         dialog.showAndWait();
+        if (!dialog.isConfirmed()) {
+            System.exit(0);
+        }
 
         playerHandler(dialog.getPlayer1Name(), dialog.getPlayer2Name());
         leikur.nyrLeikur();
