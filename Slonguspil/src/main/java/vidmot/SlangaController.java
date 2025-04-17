@@ -17,6 +17,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.util.Duration;
 import vinnsla.Leikur;
 
@@ -119,9 +121,15 @@ public class SlangaController {
         Platform.runLater(()-> {
             setPlayerPosition(leikmadur1Icon, 1);
             setPlayerPosition(leikmadur2Icon, 1);
+
+            teiknaSlonguStiga(8,5,1);
+            teiknaSlonguStiga(16,9,1);
+            teiknaSlonguStiga(23,14,1);
+
+            teiknaSlonguStiga(3,10,2);
+            teiknaSlonguStiga(7,18,2);
+            teiknaSlonguStiga(15,22,2);
         });
-
-
 
 
         slangaIcon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/vidmot/css/myndir/snake.png"))));
@@ -139,8 +147,6 @@ public class SlangaController {
         placeSlongurStigar("/vidmot/css/myndir/ladder.png", 7);
         placeSlongurStigar("/vidmot/css/myndir/ladder.png", 15);
 
-
-
         teningurImageView = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream("/vidmot/css/myndir/dice1.png"))));
         teningurImageView.setFitWidth(200);
         teningurImageView.setFitHeight(200);
@@ -157,7 +163,7 @@ public class SlangaController {
         fxSkilabod1.textProperty().bind(
                 Bindings.when(leikur.LeikLokidProperty())
                         .then(Bindings.concat("Sigurvegari: ", leikur.sigurvegariProperty()))
-                        .otherwise(Bindings.concat("Á að gera: ", leikur.hverALeikProperty()))
+                        .otherwise(Bindings.concat(leikur.hverALeikProperty()," á að gera"))
         );
 
 
@@ -376,6 +382,50 @@ public class SlangaController {
             }
         }
     }
+
+    private void teiknaSlonguStiga(int fromTile, int toTile,int slangaStigi) {
+        Node fromNode = getNode(fromTile);
+        Node toNode = getNode(toTile);
+
+        Bounds fromBounds = fromNode.localToScene(fromNode.getBoundsInLocal());
+        Bounds toBounds = toNode.localToScene(toNode.getBoundsInLocal());
+
+        Point2D fromPoint = fxBord.sceneToLocal(
+                fromBounds.getMinX() + fromBounds.getWidth() / 2,
+                fromBounds.getMinY() + fromBounds.getHeight() / 2
+        );
+
+        Point2D toPoint = fxBord.sceneToLocal(
+                toBounds.getMinX() + toBounds.getWidth() / 2,
+                toBounds.getMinY() + toBounds.getHeight() / 2
+        );
+
+        Line line = new Line();
+        line.setStartX(fromPoint.getX());
+        line.setStartY(fromPoint.getY());
+        line.setEndX(toPoint.getX());
+        line.setEndY(toPoint.getY());
+
+        line.setStrokeWidth(3);
+        if (slangaStigi == 1) {
+            line.setStroke(Color.DARKGREEN);
+        }
+        else {
+            line.setStroke(Color.BROWN);
+        }
+
+        playerPane.getChildren().add(line);
+    }
+
+    private Node getNode(int tileNumber) {
+        for (Node node : reitir) {
+            if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(tileNumber))) {
+                return node;
+            }
+        }
+        return null;
+    }
+
 
 
 
