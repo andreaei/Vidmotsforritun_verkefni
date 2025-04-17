@@ -35,6 +35,9 @@ public class SlangaController {
     private  Button fxNyrLeikurButton;
 
     @FXML
+    private Button fxQuitButton;
+
+    @FXML
     private Label fxSkilabod1;
 
     @FXML
@@ -75,7 +78,7 @@ public class SlangaController {
         //Opna Dialog í byrjun leiks. setja inn nöfn playera
         PlayerSetupDialog dialog = new PlayerSetupDialog();
         dialog.showAndWait();
-        playerNameHandler(dialog.getPlayer1Name(),dialog.getPlayer2Name());
+        playerHandler(dialog.getPlayer1Name(),dialog.getPlayer2Name());
 
         int rows = 4;
         int cols = 6;
@@ -147,25 +150,9 @@ public class SlangaController {
         fxSkilabod2.textProperty().bind(leikur.getSlongurStigar().FaersluSkilabodProperty());
         fxSkilabod1.textProperty().bind(
                 Bindings.when(leikur.LeikLokidProperty())
-                        .then(leikur.sigurvegariProperty())
-                        .otherwise(leikur.hverALeikProperty()));
-
-        fxPlayer1WinCountLabel.textProperty().bind(
-                Bindings.createStringBinding(
-                        () -> leikur.getLeikmadur1().getNafn() + " sigrar: " + leikur.getLeikmadur1().getSigrar(),
-                        leikur.getLeikmadur1().nafnProperty(),
-                        leikur.getLeikmadur1().sigrarProperty()
-                )
+                        .then(Bindings.concat("Sigurvegari: ", leikur.sigurvegariProperty()))
+                        .otherwise(Bindings.concat("Á að gera: ", leikur.hverALeikProperty()))
         );
-
-        fxPlayer2WinCountLabel.textProperty().bind(
-                Bindings.createStringBinding(
-                        () -> leikur.getLeikmadur2().getNafn() + " sigrar: " + leikur.getLeikmadur2().getSigrar(),
-                        leikur.getLeikmadur2().nafnProperty(),
-                        leikur.getLeikmadur2().sigrarProperty()
-                )
-        );
-
 
 
         //breyta mynd á tening
@@ -181,9 +168,28 @@ public class SlangaController {
 
     }
 
-    public void playerNameHandler(String nafn1,String nafn2){
+    public void playerHandler(String nafn1, String nafn2){
         leikur.setLeikmenn(nafn1,nafn2);
         leikur.nyrLeikur(); //byrjum leikinn
+
+        fxPlayer1WinCountLabel.textProperty().unbind();
+        fxPlayer1WinCountLabel.textProperty().bind(
+                Bindings.concat(
+                        leikur.getLeikmadur1().nafnProperty(),
+                        " sigrar: ",
+                        leikur.getLeikmadur1().sigrarProperty()
+                )
+        );
+
+        fxPlayer2WinCountLabel.textProperty().unbind();
+        fxPlayer2WinCountLabel.textProperty().bind(
+                Bindings.concat(
+                        leikur.getLeikmadur2().nafnProperty(),
+                        " sigrar: ",
+                        leikur.getLeikmadur2().sigrarProperty()
+                )
+        );
+
     }
 
     public void teningurHandler(ActionEvent actionEvent){
@@ -200,13 +206,30 @@ public class SlangaController {
 
     }
 
-    public void nyrLeikurHandler(ActionEvent actionEvent){
+    public void playAgainHandler(ActionEvent actionEvent){
         leikur.nyrLeikur();
         fxBord.getChildren().remove(leikmadur1Icon);
         fxBord.getChildren().remove(leikmadur2Icon);
 
         movePlayerSmoothly(leikmadur1Icon, 1);
         movePlayerSmoothly(leikmadur2Icon, 1);
+
+    }
+
+    public void nyrLeikurHandler(ActionEvent actionEvent){
+        PlayerSetupDialog dialog = new PlayerSetupDialog();
+        dialog.showAndWait();
+
+        playerHandler(dialog.getPlayer1Name(), dialog.getPlayer2Name());
+        leikur.nyrLeikur();
+
+        movePlayerSmoothly(leikmadur1Icon, 1);
+        movePlayerSmoothly(leikmadur2Icon, 1);
+
+    }
+
+    public void quitHandler(ActionEvent actionEvent){
+        Platform.exit();
     }
 
     private void addNumberedTile(int col, int row, int number) {

@@ -25,10 +25,7 @@ public class SlongurStigar {
 
     public int LendingarReitur(int reitur, String leikmadur){
         int nyrReitur = slongurStigar.getOrDefault(reitur,reitur);
-        if (reitur >= 24) {
-            faersluSkilabod.set(leikmadur + " þú vannst!!!");
-        }
-        else if(reitur>nyrReitur){
+        if(reitur>nyrReitur){
             faersluSkilabod.set(leikmadur + " þú fórst niður slöngu!!! Þú fórst frá " + reitur + " til " + nyrReitur);
         } else if (reitur<nyrReitur) {
             faersluSkilabod.set(leikmadur + " þú fórst upp stiga!!! Þú fórst frá " + reitur + " til" + nyrReitur);

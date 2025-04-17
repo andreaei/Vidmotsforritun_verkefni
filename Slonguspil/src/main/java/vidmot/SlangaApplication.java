@@ -14,7 +14,7 @@ public class SlangaApplication extends Application {
         Scene scene = new Scene(fxmlLoader.load(), 320, 240);
         scene.getStylesheets().add(getClass().getResource("/vidmot/css/SlonguStyle.css").toExternalForm());
 
-        stage.setTitle("Hello!");
+        stage.setTitle("Slöngur og Stigar!");
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

@@ -89,6 +89,7 @@ public class Leikur {
         leikmadur1.setReitur(1);
         leikmadur2.setReitur(1);
         randomStart();
+        slongurStigar.FaersluSkilabodProperty().set("");
     }
 
     public String getHverALeik(){
