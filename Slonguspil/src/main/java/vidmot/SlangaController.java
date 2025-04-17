@@ -1,5 +1,7 @@
 package vidmot;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
@@ -21,6 +23,7 @@ import vinnsla.Leikur;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 public class SlangaController {
 
@@ -147,7 +150,7 @@ public class SlangaController {
 
         //Disable Button þegar þeir eiga ekki að vera notaðir
         fxPlayButton.disableProperty().bind(leikur.LeikLokidProperty().not());
-        fxTeningurButton.disableProperty().bind(fxPlayButton.disableProperty().not());
+        fxTeningurButton.setDisable(false);
 
         //Tengja skilaboð labels við viðeigandi breytur
         fxSkilabod2.textProperty().bind(leikur.getSlongurStigar().FaersluSkilabodProperty());
@@ -158,16 +161,10 @@ public class SlangaController {
         );
 
 
-        //breyta mynd á tening
-        leikur.teningurProperty().addListener((obs, oldVal, newVal) -> {
-            String imagePath = "/vidmot/css/myndir/dice" + newVal + ".png";
-            Image newImage = new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath)));
-            teningurImageView.setImage(newImage);
-            teningurImageView.setFitWidth(200);
-            teningurImageView.setFitHeight(200);
-            teningurImageView.setPreserveRatio(true);
-            teningurImageView.setImage(newImage);
-        });
+
+        teningurImageView.setFitWidth(200);
+        teningurImageView.setFitHeight(200);
+        teningurImageView.setPreserveRatio(true);
 
     }
 
@@ -195,19 +192,50 @@ public class SlangaController {
 
     }
 
-    public void teningurHandler(ActionEvent actionEvent){
-        boolean gameOver = leikur.leikaLeik();
-        if(gameOver){
-            leikur.LeikLokidProperty().set(true);
+    public void teningurHandler(ActionEvent actionEvent) {
+        System.out.println("teningur");
+        fxTeningurButton.setDisable(true); // Ekki hægt að smella á meðan "rúllar"
+
+        Timeline timeline = new Timeline();
+        Random rand = new Random();
+        int fjoldiRulla = 5;
+        int timiMilliRulla = 100; //milisek
+
+        for (int i = 0; i < fjoldiRulla; i++) {
+            int delay = i * timiMilliRulla;
+            timeline.getKeyFrames().add(new KeyFrame(Duration.millis(delay), e -> {
+                int fakeRoll = rand.nextInt(6) + 1;
+                String fakeImagePath = "/vidmot/css/myndir/dice" + fakeRoll + ".png";
+                teningurImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(fakeImagePath))));
+            }));
         }
-        int player1Pos = leikur.getLeikmadur1().getReitur();
-        int player2Pos = leikur.getLeikmadur2().getReitur();
 
-        movePlayerSmoothly(leikmadur1Icon, player1Pos);
-        movePlayerSmoothly(leikmadur2Icon, player2Pos);
+        timeline.setOnFinished(e -> {
+            // Alvöru kast
+            boolean gameOver = leikur.leikaLeik();
 
+            // Uppfæra með rétta teningatöluna
+            int realRoll = leikur.teningurProperty().get();
+            String realImagePath = "/vidmot/css/myndir/dice" + realRoll + ".png";
+            teningurImageView.setImage(new Image(Objects.requireNonNull(getClass().getResourceAsStream(realImagePath))));
 
+            // Hreyfa leikmenn
+            movePlayerSmoothly(leikmadur1Icon, leikur.getLeikmadur1().getReitur());
+            movePlayerSmoothly(leikmadur2Icon, leikur.getLeikmadur2().getReitur());
+
+            // Ef leik lokið
+            if (gameOver) {
+                leikur.LeikLokidProperty().set(true);
+            }
+            if(!leikur.LeikLokidProperty().get()){
+                fxTeningurButton.setDisable(false);
+            }
+
+        });
+
+        timeline.play();
     }
+
 
     public void playAgainHandler(ActionEvent actionEvent){
         leikur.nyrLeikur();
@@ -216,6 +244,8 @@ public class SlangaController {
 
         movePlayerSmoothly(leikmadur1Icon, 1);
         movePlayerSmoothly(leikmadur2Icon, 1);
+
+        fxTeningurButton.setDisable(false);
 
     }
 
@@ -231,6 +261,8 @@ public class SlangaController {
 
         movePlayerSmoothly(leikmadur1Icon, 1);
         movePlayerSmoothly(leikmadur2Icon, 1);
+
+        fxTeningurButton.setDisable(false);
 
     }
 
