@@ -1,8 +1,12 @@
 package vidmot;
 
+import javafx.animation.TranslateTransition;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
@@ -12,6 +16,8 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.util.Duration;
 import vinnsla.Leikur;
 
 import java.util.ArrayList;
@@ -38,6 +44,10 @@ public class SlangaController {
 
     @FXML
     private GridPane fxBord;
+
+    @FXML
+    private Pane playerPane;
+
 
     private List<Node> reitir = new ArrayList<>();
 
@@ -84,8 +94,16 @@ public class SlangaController {
         leikmadur2Icon.setFitHeight(40);
 
 
-        placePlayer(leikmadur1Icon, 1);
-        placePlayer(leikmadur2Icon, 1);
+        // Bæta við leikmönnum í playerPane þegar leikur byrjar
+        playerPane.getChildren().add(leikmadur1Icon);
+        playerPane.getChildren().add(leikmadur2Icon);
+
+        Platform.runLater(()-> {
+            movePlayerSmoothly(leikmadur1Icon, 1);
+            movePlayerSmoothly(leikmadur2Icon, 1);
+        });
+
+
         fxInput.setOnKeyPressed(event ->{
             if(event.getCode() == KeyCode.ENTER){
                 playerNameHandler();
@@ -174,11 +192,9 @@ public class SlangaController {
         int player1Pos = leikur.getLeikmadur1().getReitur();
         int player2Pos = leikur.getLeikmadur2().getReitur();
 
-        fxBord.getChildren().remove(leikmadur1Icon);
-        fxBord.getChildren().remove(leikmadur2Icon);
+        movePlayerSmoothly(leikmadur1Icon, player1Pos);
+        movePlayerSmoothly(leikmadur2Icon, player2Pos);
 
-        placePlayer(leikmadur1Icon, player1Pos);
-        placePlayer(leikmadur2Icon, player2Pos);
 
     }
 
@@ -187,8 +203,8 @@ public class SlangaController {
         fxBord.getChildren().remove(leikmadur1Icon);
         fxBord.getChildren().remove(leikmadur2Icon);
 
-        placePlayer(leikmadur1Icon, 1);
-        placePlayer(leikmadur2Icon, 1);
+        movePlayerSmoothly(leikmadur1Icon, 1);
+        movePlayerSmoothly(leikmadur2Icon, 1);
     }
 
     private void addNumberedTile(int col, int row, int number) {
@@ -212,16 +228,6 @@ public class SlangaController {
         reitir.add(tile);
     }
 
-    private void placePlayer(ImageView playerIcon, int tileNumber) {
-        for (Node node : reitir) {
-            if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(tileNumber))) {
-                GridPane.setColumnIndex(playerIcon, GridPane.getColumnIndex(node));
-                GridPane.setRowIndex(playerIcon, GridPane.getRowIndex(node));
-                fxBord.getChildren().add(playerIcon);
-                return;
-            }
-        }
-    }
 
     private void placeSlongurStigar(String imagePath, int tileNumber) {
         ImageView icon = new ImageView(new Image(Objects.requireNonNull(getClass().getResourceAsStream(imagePath))));
@@ -237,5 +243,27 @@ public class SlangaController {
             }
         }
     }
+
+    private void movePlayerSmoothly(ImageView playerIcon, int reitur) {
+        for (Node node : reitir) {
+            if (node instanceof Label && ((Label) node).getText().equals(String.valueOf(reitur))) {
+                Bounds bounds = node.localToScene(node.getBoundsInLocal());
+
+                double newX = bounds.getMinX();
+                double newY = bounds.getMinY();
+
+                // Breyta í staðsetningu innan fxBord (Pane)
+                Point2D parentCoords = fxBord.sceneToLocal(newX, newY);
+
+                TranslateTransition transition = new TranslateTransition(Duration.millis(200), playerIcon);
+                transition.setToX(parentCoords.getX());
+                transition.setToY(parentCoords.getY());
+                transition.play();
+
+                return;
+            }
+        }
+    }
+
 
 }

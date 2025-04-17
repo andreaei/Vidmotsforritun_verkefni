@@ -57,7 +57,8 @@ public class Leikur {
         }
 
         //færa leikmanninn, athuga sigur og skipta í næsta leikmann
-        int nyrReitur = leikmadurCurrent.getReitur()+teningur.getTening();
+        int currentReitur = leikmadurCurrent.getReitur();
+        int nyrReitur = currentReitur+teningur.getTening();
 
         nyrReitur = slongurStigar.LendingarReitur(nyrReitur, leikmadurCurrent.getNafn()); //breyta lendingareit ef stigi/slanga
         leikmadurCurrent.faera(nyrReitur,fjoldiReita);
@@ -82,8 +83,8 @@ public class Leikur {
     public void nyrLeikur(){
         LeikLokid.set(false);
         Sigurvegari.set("");
-        leikmadur1.setReitur(0);
-        leikmadur2.setReitur(0);
+        leikmadur1.setReitur(1);
+        leikmadur2.setReitur(1);
         randomStart();
     }
 
